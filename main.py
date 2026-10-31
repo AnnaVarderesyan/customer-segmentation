@@ -52,3 +52,30 @@ plt.show()
 print("Inertia արժեքները:")
 for k, value in enumerate(inertia_values, start=1):
     print(f"k = {k}: {value:.2f}")
+
+kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+
+df["Cluster"] = kmeans.fit_predict(X_scaled)
+
+print("\nՀաճախորդների բաշխումն ըստ խմբերի:")
+print(df["Cluster"].value_counts().sort_index())
+
+cluster_analysis = df.groupby("Cluster")[features].mean()
+
+print("\nՅուրաքանչյուր խմբի միջին ցուցանիշները:")
+print(cluster_analysis.round(2).T.to_string())
+cluster_analysis["Income"].plot(kind="bar")
+
+plt.title("Հաճախորդների միջին եկամուտն ըստ խմբերի")
+plt.xlabel("Հաճախորդների խմբեր")
+plt.ylabel("Միջին եկամուտ")
+plt.xticks(rotation=0)
+plt.tight_layout()
+plt.savefig("cluster_income.png", dpi=300)
+plt.show()
+print("\nՀաճախորդների խմբերի միջին եկամուտները:")
+print(cluster_analysis["Income"].round(2))
+
+df.to_csv("customer_segments.csv", index=False)
+
+print("\nՀաճախորդների խմբերը պահպանվել են customer_segments.csv ֆայլում:")
